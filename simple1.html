@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>simple1</title>
+
+<link rel="shortcut icon" href="css/favicon.ico">    
+<link rel="stylesheet" type="text/css" href="css/bssite.css" media="screen" />
+ 
+<script type="text/javascript" src="static/jquery-3.3.1.min.js" ></script>
+<script type="text/javascript" src="static/jquery-ui.1.12.1.min.js" ></script>
+<script type="text/javascript" src="static/pixi-4.8.2.min.js"></script>
+<script type="text/javascript" src="static/buzz-1.2.1.js"></script>
+<script type="text/javascript" src="static/brython-3.7.0.js"></script>
+<script type="text/javascript" src="static/brython_stdlib-3.7.0.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+window.onload=function(){
+brython({debug:1, pythonpath:['static']});
+}
+</script>
+<script type="text/python">
+'''
+# example 1
+# 從 ggame 目錄中, 導入 App, ImageAsset 與 Sprite 模組
+from ggame import (
+    App, 
+    ImageAsset, 
+    Sprite, 
+    LineAsset,
+    LineStyle,
+    Color
+)
+# Create a displayed object at 100,100 using an image asset
+Sprite(ImageAsset("images/bunny.png"), (100,100))
+# Create the app, with a default stage
+app = App()  
+# Run the app
+app.run()
+'''
+'''
+# example 2
+from ggame import (
+    App, 
+    Color, 
+    LineStyle, 
+    Sprite, 
+    RectangleAsset, 
+    ImageAsset,
+    CircleAsset, 
+    EllipseAsset, 
+    PolygonAsset,
+)
+
+# reverse - change the ball direction
+def reverse(b):
+    b.direction *= -1
+
+# Set up function for handling screen refresh
+def step():
+    if ball.go:
+        ball.x += ball.direction
+        if ball.x + ball.width > myapp.width or ball.x < 0:
+            ball.x -= ball.direction
+            reverse(ball)
+
+myapp = App()
+
+# Three primary colors with no transparency (alpha = 1.0)
+red = Color(0xff0000, 1.0)
+green = Color(0x00ff00, 1.0)
+blue = Color(0x0000ff, 1.0)
+black = Color(0x000000, 1.0)
+
+# Define a line style that is a thin (1 pixel) wide black line
+thinline = LineStyle(1, black)
+# A graphics asset that represents a rectangle
+rectangle = RectangleAsset(50, 20, thinline, blue)
+
+# define colors and line style
+green = Color(0x00ff00, 1)
+black = Color(0, 1)
+noline = LineStyle(0, black)
+# a rectangle asset and sprite to use as background
+bg_asset = RectangleAsset(myapp.width, myapp.height, noline, green)
+bg = Sprite(bg_asset, (0,0))
+
+# Now display a rectangle
+Sprite(rectangle)
+
+# A ball! This is already in the ggame-tutorials repository
+ball_asset = ImageAsset("images/orb-150545_640.png")
+ball = Sprite(ball_asset, (0, 0))
+# Original image is too big. Scale it to 1/10 its original size
+ball.scale = 0.1
+# custom attributes
+ball.direction = 1
+ball.go = True
+
+myapp.run(step)
+'''
+
+# example 3
+from ggame import (
+    App, 
+    Color, 
+    Sound,
+    LineStyle, 
+    Sprite, 
+    RectangleAsset, 
+    ImageAsset,
+    CircleAsset, 
+    EllipseAsset, 
+    PolygonAsset,
+    SoundAsset,
+)
+
+myapp = App()
+
+# define colors and line style
+green = Color(0x00ff00, 1)
+black = Color(0, 1)
+noline = LineStyle(0, black)
+# a rectangle asset and sprite to use as background
+bg_asset = RectangleAsset(myapp.width, myapp.height, noline, green)
+bg = Sprite(bg_asset, (0,0))
+# A ball! This is already in the ggame-tutorials repository
+ball_asset = ImageAsset("images/orb-150545_640.png")
+ball = Sprite(ball_asset, (0, 0))
+# Original image is too big. Scale it to 1/10 its original size
+ball.scale = 0.1
+# custom attributes
+ball.direction = 10
+ball.go = True
+# Sounds
+pew1_asset = SoundAsset("sounds/pew1.mp3")
+pew1 = Sound(pew1_asset)
+pop_asset = SoundAsset("sounds/reappear.mp3")
+pop = Sound(pop_asset)
+
+# reverse - change the ball direction
+def reverse(b):
+    #pop.play()
+    b.direction *= -1
+
+def ball_y_down():
+    ball.y += 3
+    
+def ball_y_up():
+    ball.y -= 3
+
+# Set up function for handling screen refresh
+def step():
+    if ball.go:
+        ball.x += ball.direction
+        if ball.x + ball.width > myapp.width or ball.x < 0:
+            ball.x -= ball.direction
+            reverse(ball)
+
+# Handle the space key
+def spaceKey(event):
+    ball.go = not ball.go
+
+# Handle the "reverse" key
+def reverseKey(event):
+    reverse(ball)
+    
+def ballDown(event):
+    ball_y_down()
+    
+def ballUp(event):
+    ball_y_up()
+
+# Handle the mouse click
+def mouseClick(event):
+    pew1.play()
+    ball.x = event.x
+    ball.y = event.y
+    
+# Set up event handlers for the app
+myapp.listenKeyEvent('keydown', 'space', spaceKey)
+myapp.listenKeyEvent('keydown', 'r', reverseKey)
+myapp.listenMouseEvent('click', mouseClick)
+
+myapp.listenKeyEvent('keydown', 'down arrow', ballDown)
+myapp.listenKeyEvent('keydown', 'up arrow', ballUp)
+    
+myapp.run(step)
+
+'''
+# example 4
+from ggame import App, Color, LineStyle, Sprite
+from ggame import CircleAsset
+
+red = Color(0xff0000, 1.0)
+green = Color(0x00ff00, 1.0)
+blue = Color(0x0000ff, 1.0)
+black = Color(0x000000, 1.0)
+
+thinline = LineStyle(1, black)
+mycircle = CircleAsset(5, thinline, blue)
+xcoordinates = list(range(100, 600, 10))
+
+# Generate a list of sprites that form a line!
+sprites = [Sprite(mycircle, (x, x*0.5 + 100)) for x in xcoordinates]
+
+myapp = App()
+myapp.run()
+'''
+'''
+# example 5
+from ggame import (
+    App, 
+    Color, 
+    Sound,
+    LineStyle, 
+    Sprite, 
+    LineAsset,
+    RectangleAsset, 
+    ImageAsset,
+    CircleAsset, 
+    EllipseAsset, 
+    PolygonAsset,
+    SoundAsset,
+)
+
+from ggame.point import Point
+from ggame.line import LineSegment
+from ggame.mathapp import MathApp
+
+#p1 = Point((0,1), color=Color(0xff8000, 1.0))
+#p1.movable = True
+p1 = Point((200,200))
+ls = LineSegment(p1, Point((300,300)))
+
+# Three primary colors with no transparency (alpha = 1.0)
+red = Color(0xff0000, 1.0)
+green = Color(0x00ff00, 1.0)
+blue = Color(0x0000ff, 1.0)
+black = Color(0x000000, 1.0)
+
+# Define a line style that is a thin (1 pixel) wide black line
+thinline = LineStyle(1, black)
+# A graphics asset that represents a rectangle
+rectangle = RectangleAsset(50, 20, thinline, blue)
+line = LineAsset(100, 100, LineStyle(1, blue))
+
+# Now display a rectangle
+Sprite(rectangle)
+Sprite(line)
+
+
+myapp = App()
+myapp.run()
+'''
+</script>
+</body>
+</html>
+
